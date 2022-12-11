@@ -101,7 +101,7 @@ INSERT INTO AnotacaoProntuario (data_info,	informacaoes,fk_medico,	fk_prontuario
 VALUES ('11/03/2022', 'Pulmoes com somente 50% da capacidade', '123456', 5);
 
 INSERT INTO AnotacaoProntuario (data_info,	informacaoes,fk_medico,	fk_prontuario)
-VALUES ('05/10/2022', 'Pulmoes manchados e infeccionados', '123456', 5);
+VALUES ('05/10/2022', 'Pulmoes manchados e infeccionados', '951357', 5);
 
 INSERT INTO AnotacaoProntuario (data_info,	informacaoes,fk_medico,	fk_prontuario)
 VALUES ('05/10/2022', 'Infeccao generalizada por conta da nicotina', '951357', 5);
@@ -146,4 +146,81 @@ WHERE nome ILIKE 'c%'
 
 --5.Selecione o nome de todos os pacientes que estão internados,
 --ou seja, que tem um prontuário ativo
+
+SELECT nome, status
+FROM paciente, prontuario
+WHERE status = 'Ativo'
+
+--6.Selecione o valor médio de duração das internações
+
+SELECT AVG(duracao_internacao)
+FROM prontuario
+
+--7.Selecione o valor médio de duração das internações finalizadas, 
+--ou seja, inativas
+
+SELECT AVG(duracao_internacao)
+FROM prontuario
+WHERE status='Inativo'
+
+--8.Selecione as internações com maior e menor duração
+
+SELECT duracao_internacao, nome FROM prontuario, paciente
+ORDER BY duracao_internacao DESC
+
+--9.Selecione a quantidade de internações por paciente
+
+SELECT
+COUNT(data_internacao) AS internacoes
+FROM prontuario
+GROUP BY fk_paciente
+ORDER BY fk_paciente;
+
+--10.Selecione a quantidade de Anotações em Prontuário por médico
+
+SELECT COUNT(informacaoes) AS anotacoes
+FROM AnotacaoProntuario
+GROUP BY fk_medico
+ORDER BY fk_medico;
+
+--11.Selecione a quantidade de Anotações em Prontuário por médico,
+--por prontuário
+
+SELECT fk_medico,
+COUNT(AnotacaoProntuario.fk_prontuario) AS anotacoes_em_prontuario
+FROM AnotacaoProntuario
+GROUP BY fk_medico
+
+--12. Selecione os médicos que não fizeram anotação em nenhum prontuário
+
+SELECT * FROM AnotacaoProntuario e
+WHERE e.fk_medico NOT IN (SELECT equipamentoId FROM reservas); 
+
+--13.Selecione os médicos que visitaram a paciente Carla e a paciente Júlia
+
+SELECT fk_medico 
+FROM prontuario, anotacaoprontuario
+WHERE data_internacao = data_info AND 
+
+--14.Selecione os médicos que visitaram a paciente Carla e
+--não visitaram a paciente Júlia
+
+SELECT nome FROM paciente
+ORDER BY nome;
+
+--15. Selecione os pacientes ordenados por ordem alfabética
+
+SELECT nome FROM paciente
+ORDER BY nome;
+
+--16. Selecione os médicos que visitaram dois ou mais pacientes
+--no dia 05/10/2022
+
+SELECT fk_medico 
+FROM prontuario, anotacaoprontuario, paciente
+WHERE data_internacao = data_info
+
+--17. Selecione os pacientes (nome) que foram visitados por
+--pelo menos 2 médico durante sua estadia, já tendo sido
+--liberados, ou seja, o status do prontuário já está inativo
 
